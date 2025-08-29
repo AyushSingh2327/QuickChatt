@@ -1,14 +1,14 @@
-import { generateToken } from "../lib/utils";
-import User from "../models/User";
+import { generateToken } from "../lib/utils.js";
+import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import cloudinary from "../lib/cloudinaryy.js";
-import { use } from "react";
+// import { use } from "react";
 //sign up new user
 
 export const signup=async(req,res)=>{
-  const{fullname,email,password,bio}=req.body;
+  const{fullName,email,password,bio}=req.body;
   try{
-    if(!fullname ||!email || !password || !bio){
+    if(!fullName ||!email || !password || !bio){
       return res.json({success:false,message:"Missing Details"})
     }
     const user=await User.findOne({email});
@@ -19,7 +19,7 @@ export const signup=async(req,res)=>{
     const hashedPassword=await bcrypt.hash(password,salt);
 
     const newUser=await User.create({
-      fullname,email,password:hashedPassword,bio
+      fullName,email,password:hashedPassword,bio
     });
     const token=generateToken(newUser._id)
     res.json({success:true,userData:newUser,token,message:"Account created successfully"})
@@ -57,15 +57,15 @@ export const checkAuth=(req,res)=>{
 //controler to update user profile details
 export const updatedProfile=async(req,res)=>{
   try {
-    const{profilePic,bio,fullname}=req.body;
+    const{profilePic,bio,fullName}=req.body;
     const userId=req.user._id;
     let updatedUser;
     if(!profilePic){
-      updatedUser=await User.findByIdAndUpdate(userId,{bio,fullname},{new:true});
+      updatedUser=await User.findByIdAndUpdate(userId,{bio,fullName},{new:true});
     }
     else{
       const upload=await cloudinary.uploader.upload(profilePic);
-      updatedUser=await User.findByIdAndUpdate(userId,{profilePic:upload.secure_url,bio,fullname},{new:true});
+      updatedUser=await User.findByIdAndUpdate(userId,{profilePic:upload.secure_url,bio,fullName},{new:true});
       
     }
     res.json({success:true,user:updatedUser})
