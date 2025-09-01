@@ -73,9 +73,9 @@ const updateProfile=async (body)=>{
 const connectSocket=(userData)=>{
   if(!userData||socket?.connected)return;
   const newSocket=io(backendUrl,{
-    query:{
-      userId:userData._id,
-    }
+    auth: {
+    userId: userData._id,
+  }
   });
   newSocket.connect();
   setSocket(newSocket);
